@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import aiohttp
 import asyncio
 from pytube import YouTube
+from discord import VoiceState
 import longs_texts
 
 load_dotenv()
@@ -182,28 +183,53 @@ async def help_project(ctx):
     embed.set_image(url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
     await ctx.send(embed=embed)
 
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if after.channel is not None:
+        voice_client = discord.utils.get(bot.voice_clients, guild=member.guild)
+        if voice_client is not None:
+            if (voice_client.is_connected() and
+                    voice_client.channel.id != after.channel.id):
+                await voice_client.move_to(after.channel)
+
+
 async def play_song(video_id, ctx):
-    voice_channel = ctx.author.voice.channel
-    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    try:
+        voice_channel = ctx.author.voice.channel
+        voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
-    if (voice_client):
-        await voice_client.disconnect()
+        if (voice_client):
+            await voice_client.disconnect()
 
-    voice_client = await voice_channel.connect()
+        voice_client = await voice_channel.connect()
 
-    # Use pytube to get the stream URL
-    yt = YouTube(f'https://www.youtube.com/watch?v={video_id}')
-    stream = yt.streams.filter(only_audio=True).first()
-    url = stream.url
+        # Use pytube to get the stream URL
+        yt = YouTube(f'https://www.youtube.com/watch?v={video_id}')
+        stream = yt.streams.filter(only_audio=True).first()
+        url = stream.url
 
-    def play_next_song(error=None):
-        if (error):
-            print(f'Error playing song: {error}')
+        def play_next_song(error=None):
+            if (error):
+                print(f'Error playing song: {error}')
+            
+            if (queue):
+                next_song = queue.pop(0)
+                asyncio.run_coroutine_threadsafe(play_song(next_song[0], next_song[1]), bot.loop)
+
+        ffmpeg_options = {
+        'options': '-vn',
+        "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+        }
+
+
+        voice_client.play(discord.FFmpegPCMAudio(url, options=ffmpeg_options), after=play_next_song)
+        await ctx.send(f'Now playing: {info["title"]}')
+    except Exception as e:
+        print(f'Error playing song: {e}')
+
         
         if (queue):
             next_song = queue.pop(0)
-            asyncio.run_coroutine_threadsafe(play_song(next_song[0], next_song[1]), bot.loop)
-
-    voice_client.play(discord.FFmpegPCMAudio(url), after=play_next_song)
+            await play_song(next_song[0], next_song[1])
 
 bot.run(TOKEN)
