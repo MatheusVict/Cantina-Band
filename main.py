@@ -42,14 +42,14 @@ async def play(ctx, *, query):
     try:
         selection_msg = await bot.wait_for('message', check=check, timeout=60)
         selection = int(selection_msg.content)
-        if 1 <= selection <= 5:
+        if (1 <= selection <= 5):
             video_id = results[selection - 1]['id']['videoId']
             print(f'id do video {video_id}')
 
             voice_channel = ctx.author.voice.channel
             voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
-            if voice_client and voice_client.is_playing():
+            if (voice_client and voice_client.is_playing()):
                 # Add the selected video to the queue
                 queue.append((video_id, ctx))
                 await ctx.send('Song added to the queue.')
@@ -66,9 +66,9 @@ async def play(ctx, *, query):
 @bot.command()
 async def skip(ctx):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
-    if voice_client and voice_client.is_playing():
+    if (voice_client and voice_client.is_playing()):
         voice_client.stop()
-        if queue:
+        if (queue):
             next_song = queue.pop(0)
             await play_song(next_song[0], next_song[1])
             await ctx.send('Skipped music. Playing the next song in the queue.')
@@ -98,7 +98,7 @@ async def resume(ctx):
 @bot.command()
 async def stop(ctx):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
-    if voice_client and voice_client.is_playing():
+    if (voice_client and voice_client.is_playing()):
         voice_client.stop()
     await voice_client.disconnect()
 
@@ -106,7 +106,7 @@ async def play_song(video_id, ctx):
     voice_channel = ctx.author.voice.channel
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
-    if voice_client:
+    if (voice_client):
         await voice_client.disconnect()
 
     voice_client = await voice_channel.connect()
@@ -117,10 +117,10 @@ async def play_song(video_id, ctx):
     url = stream.url
 
     def play_next_song(error=None):
-        if error:
+        if (error):
             print(f'Error playing song: {error}')
         
-        if queue:
+        if (queue):
             next_song = queue.pop(0)
             asyncio.run_coroutine_threadsafe(play_song(next_song[0], next_song[1]), bot.loop)
 
