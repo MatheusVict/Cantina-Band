@@ -78,6 +78,24 @@ async def skip(ctx):
         await ctx.send("I'm not playing any music.")
 
 @bot.command()
+async def pause(ctx):
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if(voice_client and voice_client.is_playing()):
+        voice_client.pause()
+        await ctx.send("Music paused.")
+    else:
+        await ctx.send("I'm not playing any music.")
+
+@bot.command()
+async def resume(ctx):
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if (voice_client and voice_client.is_paused()):
+        voice_client.resume()
+        await ctx.send("Music resumed.")
+    else:
+        await ctx.send("I'm not playing any paused music.")
+
+@bot.command()
 async def stop(ctx):
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice_client and voice_client.is_playing():
