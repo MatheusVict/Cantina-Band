@@ -90,18 +90,16 @@ you can choise it with the number of you choise
 # Used technologies
 
 ![python](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white)
-
 ![discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)
-
 ![pycharm](https://img.shields.io/badge/PyCharm-000000.svg?&style=for-the-badge&logo=PyCharm&logoColor=white)
 
 # Libs:
 
-## [Pypi discord](https://discordpy.readthedocs.io/en/latest/index.html)
+**[Pypi discord](https://discordpy.readthedocs.io/en/latest/index.html)**
 
-## [Pytube](https://pytube.io/en/latest/)
+**[Pytube](https://pytube.io/en/latest/)**
 
-## [PyNaCl](https://pypi.org/project/PyNaCl/)
+**[PyNaCl](https://pypi.org/project/PyNaCl/)**
 
 # Help:
 
