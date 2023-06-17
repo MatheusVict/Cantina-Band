@@ -17,11 +17,57 @@ intents.voice_states = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+bot.remove_command('help')
+
 queue = []
 
 @bot.event
 async def on_ready():
     print(f'Bot {bot.user.name} logged')
+
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(
+        title = 'Bot commands',
+        description = 'Welcome to the help section. Here are all the commands for your fun!',
+        color = discord.Color.dark_orange()
+    )
+
+    embed.set_thumbnail(url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
+
+    embed.add_field(
+        name = '!help',
+        value = 'List all of the commands',
+        inline = False
+    )
+
+    embed.add_field(
+        name = '!play <Your song>',
+        value = 'Play a song with name and add to your queue',
+        inline = False
+    )
+    embed.add_field(
+        name = '!skip',
+        value = 'Skip to next music of queue',
+        inline = False
+    )
+    embed.add_field(
+        name = '!pause',
+        value = 'Pause your queue',
+        inline = False
+    )
+    embed.add_field(
+        name = '!resume',
+        value = 'Resume your queue',
+        inline = False
+    )
+    embed.add_field(
+        name = '!stop',
+        value = 'Stop bot',
+        inline = False
+    )
+
+    await ctx.send(embed=embed)
 
 @bot.command()
 async def play(ctx, *, query):
