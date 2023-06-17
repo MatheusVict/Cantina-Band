@@ -2,7 +2,7 @@
 
 ## Here you will know how use our serives and help us
 
-if you want to add this to your discord you can click on this link [do the magic](https://discord.com/api/oauth2/authorize?client_id=1119338051492139038&permissions=8&scope=bot)
+**if you want to add this to your discord you can click on this link [do the magic](https://discord.com/api/oauth2/authorize?client_id=1119338051492139038&permissions=8&scope=bot)**
 
 ![Logo_pic](https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353)
 
