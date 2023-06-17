@@ -34,7 +34,7 @@ source environment_name/bin/activate
 on Windows
 
 ```ruby
-nome_do_ambiente\Scripts\activate
+environment_name\Scripts\activate
 ```
 
 Install required packges:
