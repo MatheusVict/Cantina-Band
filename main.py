@@ -148,6 +148,17 @@ async def stop(ctx):
         voice_client.stop()
     await voice_client.disconnect()
 
+@bot.command()
+async def info(ctx):
+    embed = discord.Embed(
+        title = 'Bot infos',
+        description = 'Thanks to use my bot. You can contact me clicking in my name',
+        color = discord.Color.dark_orange()
+    )
+
+    embed.set_author(name='Matheus', url='https://github.com/MatheusVict', icon_url='https://avatars.githubusercontent.com/u/103688000?v=4')
+    await ctx.send(embed=embed)
+
 async def play_song(video_id, ctx):
     voice_channel = ctx.author.voice.channel
     voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
