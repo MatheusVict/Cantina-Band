@@ -83,6 +83,17 @@ async def help(ctx):
 
 @bot.command()
 async def play(ctx, *, query):
+    voice_state = ctx.author.voice
+    if (voice_state is None or voice_state.channel is None):
+        await ctx.send("You must be in a voice channel to use this command.")
+        return
+
+    voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
+    if (voice_client and voice_client.is_connected()):
+        if (voice_client.channel != voice_state.channel):
+            await voice_client.move_to(voice_state.channel)
+    else:
+        voice_client = await voice_state.channel.connect()
     # Search for videos using the YouTube Data API
     search_url = f'https://www.googleapis.com/youtube/v3/search?key={YOUTUBE_API_KEY}&part=snippet&type=video&q={query}'
     async with aiohttp.ClientSession() as session:
