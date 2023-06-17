@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import aiohttp
 import asyncio
 from pytube import YouTube
+import longs_texts
 
 load_dotenv()
 
@@ -64,6 +65,16 @@ async def help(ctx):
     embed.add_field(
         name = '!stop',
         value = 'Stop bot',
+        inline = False
+    )
+    embed.add_field(
+        name = '!info',
+        value = 'Info about the creator',
+        inline = False
+    )
+    embed.add_field(
+        name = '!help_project',
+        value = 'You can see more informations about the projetc and to know how help us',
         inline = False
     )
 
@@ -157,6 +168,18 @@ async def info(ctx):
     )
 
     embed.set_author(name='Matheus', url='https://github.com/MatheusVict', icon_url='https://avatars.githubusercontent.com/u/103688000?v=4')
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def help_project(ctx):
+    embed = discord.Embed(
+        title = 'You also can help this project!',
+        description = longs_texts.help_us_texts,
+        color = discord.Color.dark_orange(),
+        url = 'https://github.com/MatheusVict/Cantina-Band'
+    )
+
+    embed.set_image(url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
     await ctx.send(embed=embed)
 
 async def play_song(video_id, ctx):
