@@ -249,39 +249,37 @@ async def play_song(video_id, ctx, is_skip=False):
         voice_channel = ctx.author.voice.channel
         voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
 
-        if (voice_client):
+        if voice_client:
             await voice_client.disconnect()
 
         voice_client = await voice_channel.connect()
 
-        # Use pytube to get the stream URL
         yt = YouTube(f'https://www.youtube.com/watch?v={video_id}')
         stream = yt.streams.filter(only_audio=True).first()
         url = stream.url
 
         def play_next_song(error=None):
-            if (error):
+            if error:
                 print(f'Error playing song: {error}')
             
-            if (is_skip):  # Verifique se é um skip antes de prosseguir
-                if (queue):
-                    next_song = queue.pop(0)
-                    bot.loop.create_task(play_song(next_song[0], next_song[1], True))
-
+            if is_skip and queue:
+                next_song = queue.pop(0)
+                bot.loop.create_task(play_song(next_song[0], next_song[1], True))
 
         ffmpeg_options = {
-        'options': '-vn',
-        "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
+            'options': '-vn',
+            "before_options": "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5"
         }
 
-
         voice_client.play(discord.FFmpegPCMAudio(url, options=ffmpeg_options), after=play_next_song)
-        await ctx.send(f'Now playing: {info["title"]}')
+        await ctx.send(f'Now playing: {yt.title}')
     except Exception as e:
         print(f'Error playing song: {e}')
         
-        if (queue):
+        if queue:
             next_song = queue.pop(0)
-            await play_song(next_song[0], next_song[1])
+            await play_song(next_song[0], next_song[1], is_skip=True)
+
+
 
 bot.run(TOKEN)
