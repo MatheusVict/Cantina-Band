@@ -139,7 +139,8 @@ async def skip(ctx):
         voice_client.stop()
         if (queue):
             next_song = queue.pop(0)
-            await play_song(next_song[0], next_song[1])
+            await play_song(next_song[0], next_song[1], True)  # Defina is_skip como True
+            await asyncio.sleep(1)  # Esperar um curto período antes de reproduzir a próxima música
             await ctx.send('Skipped music. Playing the next song in the queue.')
         else:
             await ctx.send('Skipped music. There are no more songs in the queue.')
@@ -171,28 +172,67 @@ async def stop(ctx):
         voice_client.stop()
     await voice_client.disconnect()
 
+
 @bot.command()
 async def info(ctx):
     embed = discord.Embed(
-        title = 'Bot infos',
-        description = 'Thanks to use my bot. You can contact me clicking in my name',
-        color = discord.Color.dark_orange()
+        title='Creator Information',
+        description='Information about the creator of this bot.',
+        color=discord.Color.blue()
     )
 
-    embed.set_author(name='Matheus', url='https://github.com/MatheusVict', icon_url='https://avatars.githubusercontent.com/u/103688000?v=4')
+    embed.set_thumbnail(
+        url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
+
+    embed.add_field(
+        name='Creator:',
+        value='Matheus Victor',
+        inline=False
+    )
+    embed.add_field(
+        name='GitHub:',
+        value='https://github.com/MatheusVict',
+        inline=False
+    )
+    embed.add_field(
+        name='LinkedIn:',
+        value='https://www.linkedin.com/in/matheus-victor-henrique/',
+        inline=False
+    )
+
     await ctx.send(embed=embed)
 
 @bot.command()
 async def help_project(ctx):
     embed = discord.Embed(
-        title = 'You also can help this project!',
-        description = longs_texts.help_us_texts,
-        color = discord.Color.dark_orange(),
-        url = 'https://github.com/MatheusVict/Cantina-Band'
+        title='Help the Project',
+        description='You can help the project by contributing to the GitHub repository.',
+        color=discord.Color.green()
     )
 
-    embed.set_image(url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
+    embed.set_thumbnail(
+        url='https://github.com/MatheusVict/Cantina-Band/assets/103688000/d04afde8-b608-490a-a30f-7da2903b2353')
+
+    embed.add_field(
+        name='GitHub Repository:',
+        value='https://github.com/MatheusVict/Cantina-Band',
+        inline=False
+    )
+    embed.add_field(
+        name='Contributing Guide:',
+        value='https://github.com/MatheusVict/Cantina-Band/blob/main/README.md',
+        inline=False
+    )
+
     await ctx.send(embed=embed)
+
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("Invalid command. Use `!help` to see the list of available commands.")
+    else:
+        print(f'Error: {error}')
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -204,7 +244,7 @@ async def on_voice_state_update(member, before, after):
                 await voice_client.move_to(after.channel)
 
 
-async def play_song(video_id, ctx):
+async def play_song(video_id, ctx, is_skip=False):
     try:
         voice_channel = ctx.author.voice.channel
         voice_client = discord.utils.get(bot.voice_clients, guild=ctx.guild)
@@ -223,9 +263,11 @@ async def play_song(video_id, ctx):
             if (error):
                 print(f'Error playing song: {error}')
             
-            if (queue):
-                next_song = queue.pop(0)
-                asyncio.run_coroutine_threadsafe(play_song(next_song[0], next_song[1]), bot.loop)
+            if (is_skip):  # Verifique se é um skip antes de prosseguir
+                if (queue):
+                    next_song = queue.pop(0)
+                    bot.loop.create_task(play_song(next_song[0], next_song[1], True))
+
 
         ffmpeg_options = {
         'options': '-vn',
@@ -237,7 +279,6 @@ async def play_song(video_id, ctx):
         await ctx.send(f'Now playing: {info["title"]}')
     except Exception as e:
         print(f'Error playing song: {e}')
-
         
         if (queue):
             next_song = queue.pop(0)
